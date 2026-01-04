@@ -31,7 +31,11 @@ const TrendingCoins = async () => {
       header: "24h Changes",
       cellClassName: "change-cell",
       cell: (coin) => (
-        <p className="change-line">{coin.item.market_cap_rank}</p>
+        <p className="change-line">
+          {coin.item.data.price_change_percentage_24h?.usd
+            ? `${coin.item.data.price_change_percentage_24h.usd.toFixed(2)}%`
+            : "N/A"}
+        </p>
       ),
     },
     {
@@ -42,7 +46,7 @@ const TrendingCoins = async () => {
   ];
 
   return (
-    <div id="trending-coins">
+    <section id="trending-coins">
       <h4>Trending Coins</h4>
       <div id="trending-coins">
         <DataTable
@@ -54,7 +58,7 @@ const TrendingCoins = async () => {
           bodyCellClassName="py-2!"
         />
       </div>
-    </div>
+    </section>
   );
 };
 export default TrendingCoins;
