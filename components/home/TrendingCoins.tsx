@@ -2,13 +2,20 @@ import { fetcher } from "@/lib/coingecko.action";
 import DataTable from "../DataTable";
 import { formatCurrency } from "@/lib/utils";
 import Image from "next/image";
+import { TrendingCoinsFallback } from "./fallback";
 
 const TrendingCoins = async () => {
-  const trendingCoins = await fetcher<{ coins: TrendingCoin[] }>(
-    "/search/trending",
-    undefined,
-    300
-  );
+  let trendingCoins;
+  try {
+    trendingCoins = await fetcher<{ coins: TrendingCoin[] }>(
+      "/search/trending",
+      undefined,
+      300
+    );
+  } catch (error) {
+    console.error("Error fetching trending coins:", error);
+    return <TrendingCoinsFallback />;
+  }
 
   const columns: DataTableColumn<TrendingCoin>[] = [
     {
@@ -31,7 +38,11 @@ const TrendingCoins = async () => {
       header: "24h Changes",
       cellClassName: "change-cell",
       cell: (coin) => (
-        <p className="change-line">{coin.item.market_cap_rank}</p>
+        <p className="change-line">
+          {coin.item.data.price_change_percentage_24h?.usd
+            ? `${coin.item.data.price_change_percentage_24h.usd.toFixed(2)}%`
+            : "N/A"}
+        </p>
       ),
     },
     {
@@ -42,19 +53,17 @@ const TrendingCoins = async () => {
   ];
 
   return (
-    <div id="trending-coins">
+    <section id="trending-coins">
       <h4>Trending Coins</h4>
-      <div id="trending-coins">
-        <DataTable
-          columns={columns}
-          data={trendingCoins.coins.slice(0, 6) || []}
-          rowKey={(coin) => coin.item.id}
-          tableClassName="trending-coins-table"
-          headerCellClassName="py-3!"
-          bodyCellClassName="py-2!"
-        />
-      </div>
-    </div>
+      <DataTable
+        columns={columns}
+        data={trendingCoins.coins.slice(0, 6) || []}
+        rowKey={(coin) => coin.item.id}
+        tableClassName="trending-coins-table"
+        headerCellClassName="py-3!"
+        bodyCellClassName="py-2!"
+      />
+    </section>
   );
 };
 export default TrendingCoins;

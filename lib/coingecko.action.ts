@@ -28,9 +28,13 @@ export async function fetcher<T>(
     next: { revalidate },
   });
   if (!response.ok) {
-    const errorBody: CoinGeckoErrorBody = await response.json().catch(() => {});
+    const errorBody: CoinGeckoErrorBody | undefined = await response
+      .json()
+      .catch(() => undefined);
     throw new Error(
-      `Api Error: ${response.status}: ${errorBody.error || response.statusText}`
+      `Api Error: ${response.status}: ${
+        errorBody?.error || response.statusText
+      }`
     );
   }
   return response.json();
