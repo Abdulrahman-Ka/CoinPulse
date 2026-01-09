@@ -5,7 +5,20 @@ import { cn, formatCurrency, formatPercentage } from "@/lib/utils";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
 const Categories = async () => {
-  const categories = await fetcher<Category[]>("/coins/categories");
+  let categories;
+  try {
+    categories = await fetcher<Category[]>("/coins/categorie");
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return (
+      <div id="categories">
+        <h4>Top Categories</h4>
+        <p className="text-red-500 m-5">
+          Unable to load categories. Please try again later.
+        </p>
+      </div>
+    );
+  }
 
   const columns: DataTableColumn<Category>[] = [
     {
@@ -19,8 +32,8 @@ const Categories = async () => {
       cell: (category) =>
         category.top_3_coins.map((coin, index) => (
           <Image
-            key={index}
-            alt={category.name}
+            key={coin}
+            alt={`Top coin ${index + 1} in ${category.name}`}
             width={28}
             height={28}
             src={coin}

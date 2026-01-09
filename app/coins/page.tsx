@@ -23,12 +23,21 @@ const page = async ({ searchParams }: NextPageProps) => {
     });
   } catch (error) {
     console.error("error fetching coins Data : ", error);
+    return (
+      <main id="coins-page">
+        <div className="content">
+          <h4>All coins</h4>
+          <p className="text-red-500">
+            Failed to load coins. Please try again later.
+          </p>
+        </div>
+      </main>
+    );
   }
-  const hasNextPage = (await coinsData)?.length === perPage;
+  const hasNextPage = coinsData?.length === perPage;
   const estimatedTotalPages =
     currentPage >= 100 ? Math.ceil(currentPage / 100) * 100 + 100 : 100;
 
-  // console.log(coinsData);
   const columns: DataTableColumn<CoinMarketData>[] = [
     {
       header: "Rank",
