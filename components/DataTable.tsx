@@ -1,9 +1,7 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -79,7 +77,8 @@ const DataTable = <T,>({
               key={index}
               className={cn(
                 "bg-dark-400 text-purple-100 py-4 first:pl-5 last:pr-5",
-                headerCellClassName
+                headerCellClassName,
+                column.headClassName
               )}
             >
               {column.header}

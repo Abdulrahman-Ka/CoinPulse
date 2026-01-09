@@ -1,8 +1,9 @@
 import { fetcher } from "@/lib/coingecko.action";
 import DataTable from "../DataTable";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency, formatPercentage } from "@/lib/utils";
 import Image from "next/image";
 import { TrendingCoinsFallback } from "./fallback";
+import { TrendingDown, TrendingUp } from "lucide-react";
 
 const TrendingCoins = async () => {
   let trendingCoins;
@@ -22,7 +23,7 @@ const TrendingCoins = async () => {
       header: "Name",
       cellClassName: "name-cell",
       cell: (coin) => (
-        <>
+        <div className="flex items-center gap-2">
           <Image
             src={coin.item.large}
             alt={coin.item.name}
@@ -31,19 +32,34 @@ const TrendingCoins = async () => {
             className="name-image"
           />
           <p>{coin.item.name}</p>
-        </>
+        </div>
       ),
     },
     {
       header: "24h Changes",
       cellClassName: "change-cell",
-      cell: (coin) => (
-        <p className="change-line">
-          {coin.item.data.price_change_percentage_24h?.usd
-            ? `${coin.item.data.price_change_percentage_24h.usd.toFixed(2)}%`
-            : "N/A"}
-        </p>
-      ),
+      cell: (coin) => {
+        const item = coin.item;
+        const isTrendingUp = item.data.price_change_percentage_24h.usd > 0;
+
+        return (
+          <div
+            className={cn(
+              "price-change",
+              isTrendingUp ? "text-green-500" : "text-red-500"
+            )}
+          >
+            <p className="flex items-center">
+              {isTrendingUp ? (
+                <TrendingUp size={16} />
+              ) : (
+                <TrendingDown size={16} />
+              )}
+              {formatPercentage(item.data.price_change_percentage_24h.usd)}
+            </p>
+          </div>
+        );
+      },
     },
     {
       header: "Price",
