@@ -7,7 +7,7 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 const Categories = async () => {
   let categories;
   try {
-    categories = await fetcher<Category[]>("/coins/categorie");
+    categories = await fetcher<Category[]>("/coins/categories");
   } catch (error) {
     console.error("Error fetching categories:", error);
     return (
