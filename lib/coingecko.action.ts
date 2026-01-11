@@ -1,6 +1,7 @@
 "use server";
 
 import qs from "query-string";
+import useSWR from "swr";
 
 const BASE_URL = process.env.COINGECKO_BASE_URL;
 const API_KEY = process.env.COINGECKO_API_KEY;
@@ -70,4 +71,16 @@ export async function getPools(
   } catch {
     return fallback;
   }
+}
+
+export async function searchCoins(query: string): Promise<SearchCoin[]> {
+  // if (!query.trim()) return [];
+
+  const res = await fetcher<{ coins: SearchCoin[] }>(`/search`, {
+    "x-cg-demo-api-key: ": process.env.NEXT_PUBLIC_COINGECKO_API_KEY,
+    query: query,
+  });
+  console.log({ res });
+
+  return res.coins;
 }
